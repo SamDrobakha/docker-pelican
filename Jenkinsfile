@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_REPOSITORY = "10.0.111.123:5000"
         USERNAME = "ubuntu"
-        DEV_HOSTNAME = "10.0.0.224"
+        DEV_HOSTNAME = "10.0.111.106"
 }
 
 /*TODO
