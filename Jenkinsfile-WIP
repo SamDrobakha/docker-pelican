@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+/*TODO
+1. parameter - credentials (key) for agent connection
+2. environment set hostname parameter (local) (with aim to have different envs)
+3. enviroment docker registry parameter (global)
+*/
+
+    stages {
+        stage('build docker image') {
+            steps {
+                echo 'building'
+                sh '''
+                docker build . -t gardli/pelican:latest
+                docker image tag gardli/pelican localhost:5000/pelican
+                docker push localhost:5000/pelican
+                '''
+            }
+        }
+        
+        stage('deploy docker container to play/dev') {
+            steps {
+                echo 'STOPPING on agent machine'
+                sh '''
+                ssh -i ${keyfile} -o StrictHostKeyChecking=no ${username}@${HOSTNAME} \
+                    """
+                        docker container stop pelican || true
+                        docker container rm pelican || true
+                    """
+                '''
+                echo 'STARTING on agent machine'
+                sh '''
+                docker pull ${DOCKER_REPOSITORY}:5000/pelican
+                docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}:5000/pelican
+                '''
+            }
+        }
+        
+        stage('test application on play/dev') { 
+            steps {
+                echo 'TESTING on agent machine'
+                sleep 4
+                sh 'curl -I http://${HOSTNAME}:8000' 
+            }
+        }
+    }
+}
