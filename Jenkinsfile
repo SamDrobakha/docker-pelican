@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        DOCKER_REPOSITORY = "3.123.153.93:5000"
+        DOCKER_REPOSITORY = "10.0.111.123:5000"
         USERNAME = "ubuntu"
-        HOSTNAME = "18.197.11.62"
+        DEV_HOSTNAME = "10.0.0.224"
 }
 
 /*TODO
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'STOPPING on agent machine' 
                 sshagent(credentials : ['playground-dev']) {
-                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOSTNAME} uptime"
+                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
                     sh 'docker container stop pelican || true'
                     sh 'docker container rm pelican || true'
                     sleep 3
@@ -41,7 +41,7 @@ pipeline {
                 echo 'STARTING on agent machine'
                 sshagent(credentials : ['playground-dev']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOSTNAME} uptime"
+                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
                         docker pull http://${DOCKER_REPOSITORY}:5000/pelican
                         docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican
                     """
@@ -52,7 +52,7 @@ pipeline {
             steps {
                 echo 'TESTING on agent machine'
                 sleep 3
-                sh "curl -I http://${HOSTNAME}:8000"
+                sh "curl -I http://${DEV_HOSTNAME}:8000"
             }
         }
     }
