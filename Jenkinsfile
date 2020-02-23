@@ -31,15 +31,15 @@ pipeline {
         stage('deploy docker container to play/dev') {
             steps {
                 echo 'STOPPING on agent machine' 
-                sshagent(credentials : ['playground-dev']) {
-                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
+                sshagent ( ['playground-dev'] ) {
+                    sh "ssh -v -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
                     sh 'docker container stop pelican || true'
                     sh 'docker container rm pelican || true'
                     sleep 3
                 }
 
                 echo 'STARTING on agent machine'
-                sshagent(credentials : ['playground-dev']) {
+                sshagent ( ['playground-dev'] ) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
                         docker pull http://${DOCKER_REPOSITORY}:5000/pelican
@@ -48,6 +48,8 @@ pipeline {
                 }
             }
         }
+
+
         stage('test application on play/dev') { 
             steps {
                 echo 'TESTING on agent machine'
