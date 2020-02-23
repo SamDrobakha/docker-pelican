@@ -16,11 +16,16 @@ pipeline {
         stage('build docker image') {
             steps {
                 echo 'building'
-                sh """
-                    docker build . -t gardli/pelican:latest
-                    docker image tag gardli/pelican ${DOCKER_REPOSITORY}/pelican
-                    docker push http://${DOCKER_REPOSITORY}/pelican
-                """
+//              sh """
+//                    docker build . -t gardli/pelican:latest
+//                    docker image tag gardli/pelican ${DOCKER_REPOSITORY}/pelican
+//              """
+                script {
+                    docker.withRegistry("http://${DOCKER_REPOSITORY}") {
+                        def customImage = docker.build("pelican:latest")
+                        customImage.push()                    
+                    }
+                }
             }
         } 
         stage('deploy docker container to play/dev') {
