@@ -16,10 +16,6 @@ pipeline {
         stage('build docker image') {
             steps {
                 echo 'building'
-//              sh """
-//                    docker build . -t gardli/pelican:latest
-//                    docker image tag gardli/pelican ${DOCKER_REPOSITORY}/pelican
-//              """
                 script {
                     docker.withRegistry("http://${DOCKER_REPOSITORY}") {
                         def customImage = docker.build("pelican:latest")
@@ -32,7 +28,7 @@ pipeline {
             steps {
                 echo 'STOPPING on agent machine' 
                 sshagent ( ['playground-dev'] ) {
-                    sh "ssh -v -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
+                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
                     sh 'docker container stop pelican || true'
                     sh 'docker container rm pelican || true'
                     sleep 3
@@ -40,20 +36,16 @@ pipeline {
 
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
-                        docker pull http://${DOCKER_REPOSITORY}:5000/pelican
-                        docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican
-                    """
+                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
+                    sh "docker pull http://${DOCKER_REPOSITORY}:5000/pelican"
+                    sh "docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican"
                 }
             }
         }
-
-
         stage('test application on play/dev') { 
             steps {
                 echo 'TESTING on agent machine'
-                sleep 3
+                sleep 4
                 sh "curl -I http://${DEV_HOSTNAME}:8000"
             }
         }
