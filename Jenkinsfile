@@ -37,7 +37,7 @@ pipeline {
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
                     sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
-                    sh "docker pull http://${DOCKER_REPOSITORY}/pelican"
+                    sh "docker pull ${DOCKER_REPOSITORY}/pelican"
                     sh "docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican"
                 }
             }
