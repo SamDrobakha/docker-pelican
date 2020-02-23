@@ -19,7 +19,7 @@ pipeline {
                 sh """
                     docker build . -t gardli/pelican:latest
                     docker image tag gardli/pelican ${DOCKER_REPOSITORY}/pelican
-                    docker push ${DOCKER_REPOSITORY}/pelican
+                    docker push http://${DOCKER_REPOSITORY}/pelican
                 """
             }
         } 
@@ -37,7 +37,7 @@ pipeline {
                 sshagent(credentials : ['playground-dev']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOSTNAME} uptime"
-                        docker pull ${DOCKER_REPOSITORY}:5000/pelican
+                        docker pull http://${DOCKER_REPOSITORY}:5000/pelican
                         docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican
                     """
                 }
