@@ -35,7 +35,6 @@ pipeline {
                         docker container stop pelican || true
                         docker container rm pelican || true
                         sleep 5
-                        EOF
                     """
                 }
             }
@@ -56,7 +55,6 @@ pipeline {
                         docker pull ${DOCKER_REPOSITORY}/pelican
                         docker container ls
                         docker run ${run_params} ${DOCKER_REPOSITORY}/pelican
-                        EOF
                     """
                 }
             }
