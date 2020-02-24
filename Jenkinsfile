@@ -54,7 +54,7 @@ pipeline {
                 echo 'STOPPING on agent machine' 
                 sshagent ( ['playground-dev'] ) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${DEV_USERNAME}@${DEV_HOSTNAME} 
+                        ssh -o StrictHostKeyChecking=no ${DEV_USERNAME}@${DEV_HOSTNAME} <<
                         uptime && hostname
                         docker container stop pelican || true
                         docker container rm pelican || true
