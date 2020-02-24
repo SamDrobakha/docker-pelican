@@ -14,7 +14,7 @@ pipeline {
 //         description: 'DEV user id')
 //        string (name: 'DEV_HOSTNAME', defaultValue: '10.0.111.106', 
 //         description: 'DEV host name')
-    }
+//    }
     stages {
         stage('build docker image') {
             steps {
