@@ -39,7 +39,7 @@ pipeline {
                     docker.withRegistry("http://${DOCKER_REPOSITORY}") {
                         def myImage = docker.image('pelican')
                         myImage.pull()
-                        myImage.run('-d -p 8000:8000 --name pelican')                 
+                        myImage.run('-p 8000:8000')                 
                     }
                 }
 //                sshagent ( ['playground-dev'] ) {
