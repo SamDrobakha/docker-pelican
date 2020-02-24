@@ -1,3 +1,15 @@
+
+/*
+TODO
+
+1. practice pipeline status post to telegram or slack or whatever
+2. add input stage 'deploy to uat?' (and add uat to lab setup)
+3. add 'smoke test' step to build stages - stop start curl endpoint of sample container
+4. <<EOF
+
+*/
+
+
 pipeline {
     agent any
     environment {
@@ -42,7 +54,7 @@ pipeline {
                 echo 'STOPPING on agent machine' 
                 sshagent ( ['playground-dev'] ) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${DEV_USERNAME}@${DEV_HOSTNAME} <<EOF
+                        ssh -o StrictHostKeyChecking=no ${DEV_USERNAME}@${DEV_HOSTNAME} 
                         uptime && hostname
                         docker container stop pelican || true
                         docker container rm pelican || true
@@ -52,7 +64,7 @@ pipeline {
         }
         
 
-        stage('DEPLOY & START docker container to play/DEV') {
+        stage('DEPLOY docker container to play/DEV') {
             environment {            
                 run_params = "-d -p 8000:8000 --name pelican"
             }
