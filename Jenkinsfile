@@ -87,10 +87,10 @@ pipeline {
            echo "Pipeline stages complete"
         }
         success {
-            addEmbeddableBadgeConfiguration(id: pelican-status, subject: 'build', status: 'passing', color: 'brightgreen', link: 'http://3.123.153.93/jenkins/job/docker-pelican/job/master/')
+           echo "Pipeline stages completed successfully"
         }
         failure {
-           addEmbeddableBadgeConfiguration(id: pelican-status, subject: 'build', status: 'failing', color: 'red', link: 'http://3.123.153.93/jenkins/job/docker-pelican/job/master/')
+           echo "Pipeline stages completed unsuccessfully"
         }
     }
 }
