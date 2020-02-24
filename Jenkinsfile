@@ -2,8 +2,15 @@ pipeline {
     agent any
     environment {
         DOCKER_REPOSITORY = "10.0.111.123:5000"
-        DEV_USERNAME = "ubuntu"
-        DEV_HOSTNAME = "10.0.111.106"
+// moved to parameters below
+//        DEV_USERNAME = "ubuntu"
+//        DEV_HOSTNAME = "10.0.111.106"
+    }
+    parameters {
+        string (name: 'DEV_USERNAME', defaultValue: 'ubuntu', 
+         description: 'DEV user id')
+        string (name: 'DEV_HOSTNAME', defaultValue: '10.0.111.106', 
+         description: 'DEV host name')
     }
     stages {
         stage('build docker image') {
