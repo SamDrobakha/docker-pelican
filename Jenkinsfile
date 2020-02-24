@@ -18,8 +18,8 @@ pipeline {
                 echo 'building'
                 script {
                     docker.withRegistry("http://${DOCKER_REPOSITORY}") {
-                        def customImage = docker.build("pelican:latest")
-                        customImage.push()                    
+                        def myImage = docker.build("pelican:latest")
+                        myImage.push()                    
                     }
                 }
             }
@@ -37,7 +37,9 @@ pipeline {
                 echo 'STARTING on agent machine'
                 script {
                     docker.withRegistry("http://${DOCKER_REPOSITORY}") {
-                        docker.image('pelican').withRun('-d -p 8000:8000 --name pelican')                 
+                        def myImage = docker.image('pelican')
+                        myImage.pull
+                        myImage.run('-d -p 8000:8000 --name pelican')                 
                     }
                 }
 //                sshagent ( ['playground-dev'] ) {
