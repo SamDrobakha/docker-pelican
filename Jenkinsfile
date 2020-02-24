@@ -37,12 +37,13 @@ pipeline {
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} 
+                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} bash -c << 'EOF'  
                         uptime
                         docker image ls
                         docker pull ${DOCKER_REPOSITORY}/pelican
                         docker container ls
                         docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican
+                        EOF
                     """
                 }
             }
