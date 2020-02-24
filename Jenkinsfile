@@ -35,6 +35,7 @@ pipeline {
                         docker container stop pelican || true
                         docker container rm pelican || true
                         sleep 5
+                        EOF
                     """
                 }
             }
