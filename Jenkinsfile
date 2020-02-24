@@ -2,15 +2,18 @@ pipeline {
     agent any
     environment {
         DOCKER_REPOSITORY = "10.0.111.123:5000"
-// moved to parameters below
-//        DEV_USERNAME = "ubuntu"
-//        DEV_HOSTNAME = "10.0.111.106"
+        DEV_USERNAME = "ubuntu"
+        DEV_HOSTNAME = "10.0.111.106"
     }
-    parameters {
-        string (name: 'DEV_USERNAME', defaultValue: 'ubuntu', 
-         description: 'DEV user id')
-        string (name: 'DEV_HOSTNAME', defaultValue: '10.0.111.106', 
-         description: 'DEV host name')
+//
+// [automated pipeline run does not like 'default' parameters and prefer 'environment' variables
+// there are workaround how to setup default parametrs in automated pipeline]
+//
+//    parameters {
+//        string (name: 'DEV_USERNAME', defaultValue: 'ubuntu', 
+//         description: 'DEV user id')
+//        string (name: 'DEV_HOSTNAME', defaultValue: '10.0.111.106', 
+//         description: 'DEV host name')
     }
     stages {
         stage('build docker image') {
@@ -21,7 +24,9 @@ pipeline {
                     docker tag gardli/pelican ${DOCKER_REPOSITORY}/pelican
                     docker push ${DOCKER_REPOSITORY}/pelican
                 """
-// this actually works, leaving this here for history
+//
+// [this actually works, leaving this here for history]
+//
 //                script {
 //                    docker.withRegistry("http://${DOCKER_REPOSITORY}") {
 //                        def myImage = docker.build("pelican:latest")
