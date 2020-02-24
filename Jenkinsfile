@@ -37,9 +37,9 @@ pipeline {
                 echo 'STARTING on agent machine'
                 script {
                     docker.withRegistry("http://${DOCKER_REPOSITORY}") {
-                        def myImage = docker.image('pelican')
+                        def myImage = docker.image("${DOCKER_REPOSITORY}/pelican")
                         myImage.pull()
-                        myImage.run('-p 8000:8000')                 
+                        myImage.run('-p 8000:8000 --name pelican')                 
                     }
                 }
 //                sshagent ( ['playground-dev'] ) {
