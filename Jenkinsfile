@@ -2,11 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_REPOSITORY = "10.0.111.123:5000"
-}
-
-/*TODO
-*/
-
+    }
     stages {
         stage('build docker image') {
             steps {
@@ -25,7 +21,9 @@ pipeline {
 //                }
             }
         } 
-        stage('deploy docker container to play/DEV') {
+        
+
+        stage('STOP docker container on play/DEV') {
             environment {
                 USERNAME = "ubuntu"
                 HOSTNAME = "10.0.111.106"
@@ -41,7 +39,12 @@ pipeline {
                         sleep 5
                     """
                 }
+            }
+        }
+        
 
+        stage('DEPLOY & START docker container to play/DEV') {
+            steps {
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
                     sh """
@@ -56,10 +59,13 @@ pipeline {
                 }
             }
         }
+        
+
         stage('test application on play/DEV') {
             environment {
                 USERNAME = "ubuntu"
                 HOSTNAME = "10.0.111.106"
+            }
             steps {
                 echo 'TESTING on agent machine'
                 sleep 5
