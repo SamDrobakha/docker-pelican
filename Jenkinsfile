@@ -2,6 +2,8 @@ pipeline {
     agent any
     environment {
         DOCKER_REPOSITORY = "10.0.111.123:5000"
+        DEV_USERNAME = "ubuntu"
+        DEV_HOSTNAME = "10.0.111.106"
     }
     stages {
         stage('build docker image') {
@@ -24,15 +26,12 @@ pipeline {
         
 
         stage('STOP docker container on play/DEV') {
-            environment {
-                USERNAME = "ubuntu"
-                HOSTNAME = "10.0.111.106"
-            }
+            environment {            }
             steps {
                 echo 'STOPPING on agent machine' 
                 sshagent ( ['playground-dev'] ) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOSTNAME} <<EOF
+                        ssh -o StrictHostKeyChecking=no ${DEV_USERNAME}@${DEV_HOSTNAME} <<EOF
                         uptime && hostname
                         docker container stop pelican || true
                         docker container rm pelican || true
@@ -44,16 +43,19 @@ pipeline {
         
 
         stage('DEPLOY & START docker container to play/DEV') {
+            environment {            
+                run_params = "-d -p 8000:8000 --name pelican"
+            }
             steps {
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${HOSTNAME} <<EOF
+                        ssh -o StrictHostKeyChecking=no ${DEV_USERNAME}@${DEV_HOSTNAME} <<EOF
                         uptime && hostname
                         docker image ls
                         docker pull ${DOCKER_REPOSITORY}/pelican
                         docker container ls
-                        docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican
+                        docker run ${run_params} ${DOCKER_REPOSITORY}/pelican
                         EOF
                     """
                 }
@@ -62,14 +64,11 @@ pipeline {
         
 
         stage('test application on play/DEV') {
-            environment {
-                USERNAME = "ubuntu"
-                HOSTNAME = "10.0.111.106"
-            }
+            environment {            }
             steps {
                 echo 'TESTING on agent machine'
                 sleep 5
-                sh "curl -I http://${HOSTNAME}:8000"
+                sh "curl -I http://${DEV_HOSTNAME}:8000"
             }
         }
     }
