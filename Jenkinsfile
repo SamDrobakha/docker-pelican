@@ -26,7 +26,6 @@ pipeline {
         
 
         stage('STOP docker container on play/DEV') {
-            environment {            }
             steps {
                 echo 'STOPPING on agent machine' 
                 sshagent ( ['playground-dev'] ) {
@@ -64,7 +63,6 @@ pipeline {
         
 
         stage('test application on play/DEV') {
-            environment {            }
             steps {
                 echo 'TESTING on agent machine'
                 sleep 5
