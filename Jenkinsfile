@@ -16,29 +16,38 @@ pipeline {
         stage('build docker image') {
             steps {
                 echo 'building'
-                script {
-                    docker.withRegistry("http://${DOCKER_REPOSITORY}") {
-                        def myImage = docker.build("pelican:latest")
-                        myImage.push()                    
-                    }
-                }
+                ssh """
+                    docker build . -t gardli/pelican:latest
+                    docker tag gardli/pelican ${DOCKER_REPOSITORY}/pelican
+                    docker push ${DOCKER_REPOSITORY}/pelican
+                """
+// this actually works, leaving this here for history
+//                script {
+//                    docker.withRegistry("http://${DOCKER_REPOSITORY}") {
+//                        def myImage = docker.build("pelican:latest")
+//                        myImage.push()                    
+//                    }
+//                }
             }
         } 
         stage('deploy docker container to play/dev') {
             steps {
                 echo 'STOPPING on agent machine' 
                 sshagent ( ['playground-dev'] ) {
-                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
-                    sh 'docker container stop pelican || true'
-                    sh 'docker container rm pelican || true'
-                    sleep 5
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} <<EOF
+                        uptime && hostname
+                        docker container stop pelican || true
+                        docker container rm pelican || true
+                        sleep 5
+                    """
                 }
 
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} <<EOF
-                        uptime
+                        uptime && hostname
                         docker image ls
                         docker pull ${DOCKER_REPOSITORY}/pelican
                         docker container ls
