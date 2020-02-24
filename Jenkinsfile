@@ -37,19 +37,9 @@ pipeline {
                 echo 'STARTING on agent machine'
                 sshagent ( ['playground-dev'] ) {
                     sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
-                    script {
-                        docker.withRegistry("http://${DOCKER_REPOSITORY}") {
-                            def myImage = docker.image("${DOCKER_REPOSITORY}/pelican")
-                                myImage.pull()
-                                myImage.run('-p 8000:8000 --name pelican')
-                            }              
-                        }               
+                    sh "docker pull ${DOCKER_REPOSITORY}/pelican"
+                    sh "docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican"
                 }
-//                sshagent ( ['playground-dev'] ) {
-//                    sh "ssh -o StrictHostKeyChecking=no ${USERNAME}@${DEV_HOSTNAME} uptime"
-//                    sh "docker pull ${DOCKER_REPOSITORY}/pelican"
-//                    sh "docker run -d -p 8000:8000 --name pelican ${DOCKER_REPOSITORY}/pelican"
-//                }
             }
         }
         stage('test application on play/dev') { 
