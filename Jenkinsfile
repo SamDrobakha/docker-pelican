@@ -1,11 +1,12 @@
 
 /*
-TODO
+abandoned TODO
 
 1. practice pipeline status post to telegram or slack or whatever
 2. add input stage 'deploy to uat?' (and add uat to lab setup)
 3. add 'smoke test' step to build stages - stop start curl endpoint of sample container
 4. <<EOF
+5. use plugins and library scripts, not sh (similar logic to modules in ansible)
 
 */
 
@@ -17,9 +18,6 @@ pipeline {
         DEV_USERNAME = "ubuntu"
         DEV_HOSTNAME = "10.0.111.106"
     }
-//
-// [automated pipeline run does not like 'default' parameters and prefer 'environment' variables
-// there are workaround how to setup default parametrs in automated pipeline]
 //
 //    parameters {
 //        string (name: 'DEV_USERNAME', defaultValue: 'ubuntu', 
